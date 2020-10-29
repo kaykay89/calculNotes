@@ -1,0 +1,1131 @@
+;**********************************************************************************************************
+;*       TP2: Programme de calcul de notes d'etudiants                                                    *
+;*                                                                                                        *
+;*       Le programme calcule la note normale, la note finale, la note majorée,                           *
+;*       la note littérale et l'écart-type de chaque étudiant.                                            *
+;*       De plus le programme calcule le nombre d'étudiants ainsi que la moyene et l'écart-type du groupe.*
+;*       Il suffit à l'utilisateur d'entrer les résultats des cinq TP séparés par des virgules.           *
+;*                                                                                                        *
+;*       Auteure: Kayla Louis  LOUK13628902                                                               *
+;*       Courriel: louis.kayla@courrier.uqam.ca                                                           *
+;*       Date: 29 juin 2017                                                                               *
+;*       Cours: INF2170, groupe 20                                                                        *
+;**********************************************************************************************************
+;
+maxCara: .EQUATE 40          ; #2h
+;
+         STRO    accueil,d   
+;
+; SAISIE DES NOTES DU PREMIER ÉTUDIANT
+;
+debutE1: LDA     0,i         
+         STA     compteur,d  
+         STA     nbEtudia,d  
+         STA     numTabG,d
+         STA     numTab,d 
+         STA     nbCaract,d
+         STA     longueur,d
+         STA     note,d
+         LDX     0,i         
+         STRO    donnees1,d  
+         CHARI   caract,d 
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur1
+         LDA     0,i   
+         LDBYTEA caract,d    
+         CPA     '\n',i      
+         BREQ    fin         
+         CPA     '0',i       
+         BRLT    erreur1     
+         CPA     '9',i       
+         BRGT    erreur1     
+         SUBA    48,i  
+; 
+         LDX     longueur,d
+         STA     tabNote,x
+         ADDX    2,i
+         STX     longueur,d 
+prisenot:CHARI   caract,d 
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur1
+         LDA     0,i   
+         LDBYTEA caract,d
+         CPA     ',',i
+         BRNE    suite
+         LDX     longueur,d
+         SUBX    2,i
+         STX     longueur,d
+         CALL    transfo
+         BR      retourT1
+suite:   CPA     '0',i       
+         BRLT    erreur1     
+         CPA     '9',i       
+         BRGT    erreur1     
+         SUBA    48,i  
+         STA     tabNote,x 
+         ADDX    2,i
+         STX     longueur,d 
+         CPX     32,i
+         BRGT    erreur1
+         BR      prisenot 
+; 
+retourT1:CPX     -1,i
+         BREQ    erreur1     
+;
+         LDA     compteur,d  ; incrémentation du compteur, 1 note a été entrée
+         ADDA    1,i         
+         STA     compteur,d         
+;
+E1note2: LDX     0,i
+         CHARI   caract,d    
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur1
+         LDA     0,i     
+         LDBYTEA caract,d        
+         CPA     '0',i       
+         BRLT    erreur1     
+         CPA     '9',i       
+         BRGT    erreur1     
+         SUBA    48,i 
+         STA     tabNote,x
+         ADDX    2,i
+         STX     longueur,d
+         CPX     32,i
+         BRGT    erreur1
+priseno: CHARI   caract,d    
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur1 
+         LDA     0,i     
+         LDBYTEA caract,d     
+         CPA     ',',i
+         BREQ    suiteA
+         CPA     '\n',i
+         BREQ    suiteA
+         BR      suiteE
+suiteA:  LDX     longueur,d
+         SUBX    2,i
+         STX     longueur,d
+         CALL    transfo
+         BR      retourT2
+suiteE:  CPA     '0',i       
+         BRLT    erreur1     
+         CPA     '9',i       
+         BRGT    erreur1     
+         SUBA    48,i  
+         STA     tabNote,x 
+         ADDX    2,i
+         STX     longueur,d 
+         CPX     32,i
+         BRGT    erreur1
+         BR      priseno
+;
+retourT2:CPX     -1,i
+         BREQ    erreur1     
+;
+         LDA     compteur,d  ; incrémentation du compteur, 1 note a été entrée
+         ADDA    1,i         
+         STA     compteur,d       
+;
+         CPA     5,i         ; verification si les 5 notes ont été entrées
+         BRLT    E1note2 
+         LDA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur1 
+         LDA     nbEtudia,d  
+         ADDA    1,i         
+         STA     nbEtudia,d  
+;
+         BR      calcul      
+;
+         LDA     nbEtudia,d  
+         CPA     50,i        ; verification qu'on a pas plus de 50 étudiants
+         BREQ    calcul50    
+;
+; SAISIE DES NOTES DES ÉTUDIANTS SUIVANTS
+;
+debutE:  STRO    donnees2,d  ; demande pour entrer les notes de l'etudiant suivant
+         LDA     nbEtudia,d  
+         ADDA    1,i         
+         STA     compt2,d    
+         DECO    compt2,d    
+         STRO    donnees3,d  
+;
+         LDA     0,i         
+         STA     compteur,d  
+         STA     nbCaract,d 
+         CHARI   caract,d    
+         LDBYTEA caract,d    
+         CPA     '\n',i      
+         BREQ    calculF     
+         CPA     '0',i       
+         BRLT    erreur2     
+         CPA     '9',i       
+         BRGT    erreur2     
+         SUBA    48,i   
+
+         LDX     0,i
+         STA     tabNote,x
+         ADDX    2,i
+         STX     longueur,d 
+prise1:  CHARI   caract,d 
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur2
+         LDA     0,i   
+         LDBYTEA caract,d
+         CPA     ',',i
+         BRNE    suiteB
+         LDX     longueur,d
+         SUBX    2,i
+         STX     longueur,d
+         CALL    transfo
+         BR      retourT3
+suiteB:  CPA     '0',i       
+         BRLT    erreur2    
+         CPA     '9',i       
+         BRGT    erreur2     
+         SUBA    48,i  
+         STA     tabNote,x 
+         ADDX    2,i
+         STX     longueur,d 
+         CPX     32,i
+         BRGT    erreur2
+         BR      prise1 
+; 
+retourT3:CPX     -1,i
+         BREQ    erreur2    
+;  
+         LDA     compteur,d  ; incrémentation du compteur, 1 note a été entrée
+         ADDA    1,i         
+         STA     compteur,d     
+;
+Enote2:  LDX     0,i
+         CHARI   caract,d    
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur2
+         LDA     0,i     
+         LDBYTEA caract,d        
+         CPA     '0',i       
+         BRLT    erreur2     
+         CPA     '9',i       
+         BRGT    erreur2     
+         SUBA    48,i 
+         STA     tabNote,x
+         ADDX    2,i
+         STX     longueur,d
+         CPX     32,i
+         BRGT    erreur2
+prise2:  CHARI   caract,d    
+         LDA     nbCaract,d
+         ADDA    1,i
+         STA     nbCaract,d
+         LDA     0,i     
+         LDBYTEA caract,d      
+         CPA     ',',i
+         BREQ    suiteC
+         CPA     '\n',i
+         BREQ    suiteC
+         BR      suiteD
+suiteC:  LDX     longueur,d
+         SUBX    2,i
+         STX     longueur,d  
+         CALL    transfo
+         BR      retourT4
+suiteD:  CPA     '0',i       
+         BRLT    erreur2     
+         CPA     '9',i       
+         BRGT    erreur2     
+         SUBA    48,i  
+         STA     tabNote,x 
+         ADDX    2,i
+         STX     longueur,d 
+         CPX     32,i
+         BRGT    erreur2
+         BR      prise2
+;
+retourT4:CPX     -1,i
+         BREQ    erreur2
+
+         LDA     compteur,d  ; incrémentation du compteur, 1 note a été entrée
+         ADDA    1,i         
+         STA     compteur,d          
+;
+         CPA     5,i         ; verification si les 5 notes ont été entrées
+         BRLT    Enote2  
+         LDA     nbCaract,d
+         SUBA    40,i
+         BRGT    erreur2    
+         LDA     nbEtudia,d  
+         ADDA    1,i         
+         STA     nbEtudia,d  
+;
+         BR      calcul      
+;
+         LDA     nbEtudia,d  
+         CPA     50,i        ; verification qu'on a pas plus de 50 étudiants
+         BREQ    calcul50    
+         CPA     50,i        
+         BRLT    debutE      
+;
+erreur1: STRO    invalide,d  
+         DECO    nbCaract,d
+         CPA     10,i
+         BREQ    debutE1
+inv1:    CHARI   caract,d    ; vidange du tampon
+         LDA     0,i         
+         STA     compteur,d  
+         LDBYTEA caract,d    
+         CPA     '\n',i      
+         BREQ    debutE1     
+         BRNE    inv1        
+;
+erreur2: STRO    invalide,d  
+         DECO    nbCaract,d
+         CPA     10,i
+         BREQ    debutE
+inv2:    CHARI   caract,d    ; vidange du tampon
+         LDA     0,i         
+         STA     compteur,d  
+         LDBYTEA caract,d    
+         CPA     '\n',i      
+         BREQ    debutE      
+         BRNE    inv2        
+;
+calcul:  CALL    notNorma
+         LDX     numTab,d  
+;
+         SUBX    10,i        ; calcul pour voir lequel ques 3 premiers TP a la meilleure note
+         LDA     1,i
+         STA     compteur,d
+         LDA     tabNoteE,x 
+         STA     noteMeil,d
+         ADDX    2,i
+         LDA     tabNoteE,x
+         CPA     noteMeil,d
+         BRLE    noteSuiv
+         STA     noteMeil,d
+         LDA     2,i
+         STA     compteur,d
+noteSuiv:ADDX    2,i
+         LDA     tabNoteE,x
+         CPA     noteMeil,d
+         BRLE    suiv 
+         STA     noteMeil,d
+         LDA     3,i
+         STA     compteur,d
+suiv:    ADDX    6,i
+;
+         LDA     compteur,d
+         CPA     1,i
+         BRGT    suiv1
+         CALL    noteMaj1
+         BR      noteFina
+suiv1:   CPA     2,i
+         BRGT    suiv2
+         CALL    noteMaj2 
+         BR      noteFina
+suiv2:   CALL    noteMaj3 
+         BR      noteFina
+; 
+noteFina:STX     noteFin,d   ; calcul note finale
+         LDX     numTab,d    
+         LDA     noteNorm,d  
+         SUBA    noteMaj,d   
+         BRLE    calcEcar     
+         LDA     noteNorm,d  
+         STA     noteFin,d  
+;
+calcEcar:SUBX    10,i        ;calcul ecart-type
+         LDA     tabNoteE,x 
+         ADDX    2,i
+         ADDA    tabNoteE,x
+         ADDX    2,i
+         ADDA    tabNoteE,x
+         ADDX    2,i
+         ADDA    tabNoteE,x
+         ADDX    2,i
+         ADDA    tabNoteE,x
+         ADDX    2,i  
+         STX     numTab,d
+         LDX     5,i
+         CALL    div
+         STX     moy,d 
+         LDX     numTab,d
+         SUBX    10,i 
+; 
+         LDA     tabNoteE,x
+         ADDX    2,i
+         SUBA    moy,d
+         BRGE    next1
+         NEGA
+next1:   STX     nombre,d
+         ADDA    5,i
+         CALL    div10
+         STX     multiple,d
+         LDA     0,i
+         CALL    mult
+         STA     ecart1,d
+         LDX     nombre,d  
+;
+         LDA     tabNoteE,x
+         ADDX    2,i
+         SUBA    moy,d
+         BRGE    next2
+         NEGA
+next2:   STX     nombre,d
+         ADDA    5,i
+         CALL    div10
+         STX     multiple,d
+         LDA     0,i
+         CALL    mult
+         ADDA    ecart1,d
+         STA     ecart1,d
+         LDX     nombre,d 
+;
+         LDA     tabNoteE,x
+         ADDX    2,i
+         SUBA    moy,d
+         BRGE    next3
+         NEGA
+next3:   STX     nombre,d
+         ADDA    5,i
+         CALL    div10
+         STX     multiple,d
+         LDA     0,i
+         CALL    mult
+         ADDA    ecart1,d
+         STA     ecart1,d 
+         LDX     nombre,d 
+;
+         LDA     tabNoteE,x
+         ADDX    2,i
+         SUBA    moy,d
+         BRGE    next4
+         NEGA
+next4:   STX     nombre,d
+         ADDA    5,i
+         CALL    div10
+         STX     multiple,d
+         LDA     0,i
+         CALL    mult
+         ADDA    ecart1,d
+         STA     ecart1,d
+         LDX     nombre,d 
+;
+         LDA     tabNoteE,x
+         ADDX    2,i
+         SUBA    moy,d
+         BRGE    next5
+         NEGA
+next5:   STX     nombre,d
+         ADDA    5,i
+         CALL    div10
+         STX     multiple,d
+         LDA     0,i
+         CALL    mult
+         ADDA    ecart1,d
+         STA     ecart1,d
+         LDX     nombre,d
+         STX     numTab,d    
+;
+         LDA     ecart1,d
+         LDX     5,i
+         CALL    div
+         STX     ecart,d
+         NEGA
+         CPA     3,i
+         BRLT    next6
+         LDA     ecart,d
+         ADDA    1,i
+         STA     ecart,d
+next6:   CALL    rcCarre
+         LDX     numTab,d
+;       
+noteDec: LDX     numTabG,d
+         LDA     noteFin,d
+         STA     tabNoteG,x
+         ADDX    2,i
+         STX     numTabG,d
+         LDX     numTab,d
+         LDA     noteNorm,d  ; decimale note normale
+         CALL    div10 
+         CPA     0,i
+         BREQ    staN      
+         ADDA    10,i                
+staN:    STA     resteN,d    
+         STX     noteNorm,d     
+         LDA     noteMaj,d  ; decimale note majorée
+         CALL    div10
+         CPA     0,i
+         BREQ    staM
+         ADDA    10,i                
+staM:    STA     resteM,d    
+         STX     noteMaj,d     
+         LDA     noteFin,d  ; decimale note finale
+         CALL    div10  
+         CPA     0,i
+         BREQ    staF      
+         ADDA    10,i                
+staF:    STA     resteF,d    
+         STX     noteFin,d 
+         LDX     numTab,d
+;
+         LDA     noteFin,d   ; calcul note litterale
+         CPA     50,i
+         BRGE    plus50 
+         LDA     0,i
+         LDBYTEA 'E',i
+         STBYTEA     noteLit,d
+         LDBYTEA ' ',i
+         STBYTEA signe,d
+         BR      aff
+plus50:  LDA     noteFin,d 
+         CPA     55,i
+         BRGE    plus55
+         LDA     0,i
+         LDBYTEA 'D',i
+         STBYTEA     noteLit,d
+         LDBYTEA ' ',i
+         STBYTEA signe,d
+         BR      aff
+plus55:  LDA     noteFin,d  
+         CPA     60,i
+         BRGE    plus60
+         LDA     0,i
+         LDBYTEA 'D',i
+         STBYTEA noteLit,d
+         LDBYTEA '+',i
+         STBYTEA signe,d 
+         BR      aff        
+plus60:  LDA     noteFin,d  
+         CPA     63,i
+         BRGE    plus63
+         LDA     0,i
+         LDBYTEA 'C',i
+         STBYTEA noteLit,d
+         LDBYTEA '-',i
+         STBYTEA signe,d 
+         BR      aff
+plus63:  LDA     noteFin,d  
+         CPA     66,i
+         BRGE    plus66
+         LDA     0,i
+         LDBYTEA 'C',i
+         STBYTEA noteLit,d
+         LDBYTEA ' ',i
+         STBYTEA signe,d
+         BR      aff
+plus66:  LDA     noteFin,d  
+         CPA     70,i
+         BRGE    plus70
+         LDA     0,i
+         LDBYTEA 'C',i
+         STBYTEA noteLit,d
+         LDBYTEA '+',i
+         STBYTEA signe,d 
+         BR      aff
+plus70:  LDA     noteFin,d  
+         CPA     73,i
+         BRGE    plus73
+         LDA     0,i
+         LDBYTEA 'B',i
+         STBYTEA noteLit,d
+         LDBYTEA '-',i
+         STBYTEA signe,d 
+         BR      aff
+plus73:  LDA     noteFin,d  
+         CPA     76,i
+         BRGE    plus76
+         LDA     0,i
+         LDBYTEA 'B',i
+         STBYTEA noteLit,d
+         LDBYTEA ' ',i
+         STBYTEA signe,d
+         BR      aff
+plus76:  LDA     noteFin,d  
+         CPA     80,i
+         BRGE    plus80
+         LDA     0,i
+         LDBYTEA 'B',i
+         STBYTEA noteLit,d
+         LDBYTEA '+',i
+         STBYTEA signe,d 
+         BR      aff
+plus80:  LDA     noteFin,d  
+         CPA     85,i
+         BRGE    plus85
+         LDA     0,i
+         LDBYTEA 'A',i
+         STBYTEA noteLit,d
+         LDBYTEA '-',i
+         STBYTEA signe,d 
+         BR      aff
+plus85:  LDA     noteFin,d  
+         CPA     90,i
+         BRGE    plus90
+         LDA     0,i
+         LDBYTEA 'A',i
+         STBYTEA noteLit,d
+         LDBYTEA ' ',i
+         STBYTEA signe,d
+         BR      aff
+plus90:  LDA     0,i
+         LDBYTEA 'A',i
+         STBYTEA noteLit,d
+         LDBYTEA '+',i
+         STBYTEA signe,d 
+         BR      aff
+;
+aff:     LDA     noteFin,d
+         CPA     100,i
+         BREQ    affic100
+         LDA     noteFin,d
+         CPA     10,i 
+         BRLT    affich9
+         BR      affichag   
+;
+affichag:CHARO   '\n',i      
+         STRO    txtNoteN,d  
+         DECO    noteNorm,d  
+         CHARO   '.',i       
+         DECO    resteN,d    
+         CHARO   '%',i       
+         STRO    txtNoteM,d  
+         DECO    noteMaj,d  
+         CHARO   '.',i
+         DECO    resteM,d 
+         CHARO   '%',i       
+         STRO    txtNoteF,d  
+         DECO    noteFin,d   
+         CHARO   '.',i
+         DECO    resteF,d
+         CHARO   '%',i       
+         STRO    txtNoteL,d 
+         CHARO   noteLit,d 
+         CHARO   signe,d
+         STRO    txtEcart,d
+         DECO    ecartT,d 
+         LDA     0,i
+         STBYTEA signe,d
+         BR      debutE    
+
+;
+affic100:CHARO   '\n',i      
+         STRO    txtNoteN,d  
+         DECO    noteNorm,d  
+         CHARO   '.',i       
+         DECO    resteN,d    
+         CHARO   '%',i       
+         STRO    txtNotM1,d  
+         DECO    noteMaj,d  
+         CHARO   '.',i
+         DECO    resteM,d 
+         CHARO   '%',i       
+         STRO    txtNotF1,d  
+         DECO    noteFin,d   
+         CHARO   '.',i
+         DECO    resteF,d
+         CHARO   '%',i       
+         STRO    txtNoteL,d 
+         CHARO   noteLit,d 
+         CHARO   signe,d
+         STRO    txtEcart,d
+         DECO    ecartT,d 
+         LDA     0,i
+         STBYTEA signe,d
+         BR      debutE 
+;
+affich9: CHARO   '\n',i      
+         STRO    txtNoteN,d  
+         DECO    noteNorm,d  
+         CHARO   '.',i       
+         DECO    resteN,d    
+         CHARO   '%',i   
+         CHARO   32,i       
+         STRO    txtNoteM,d  
+         DECO    noteMaj,d  
+         CHARO   '.',i
+         DECO    resteM,d 
+         CHARO   '%',i  
+         CHARO   32,i     
+         STRO    txtNoteF,d  
+         DECO    noteFin,d   
+         CHARO   '.',i
+         DECO    resteF,d
+         CHARO   '%',i     
+         STRO    txtNoteL,d 
+         CHARO   noteLit,d 
+         CHARO   signe,d
+         STRO    txtEcart,d
+         DECO    ecartT,d 
+         LDA     0,i
+         STBYTEA signe,d
+         BR      debutE 
+;
+calcul50:STRO    E50,d       
+calculF: LDX     0,i
+         LDA     0,i
+         STA     ecart1,d
+add:     ADDA    tabNoteG,x 
+         ADDX    2,i
+         CPX     numTabG,d
+         BRLT    add  
+         LDX     nbEtudia,d
+         CALL    div
+         STX     noteNorm,d 
+         NEGA
+         CPA     3,i
+         BRLT    ecartt
+         ADDX    1,i
+ecartt:  STX     moy,d     
+         LDA     noteNorm,d  ; decimale note normale
+         CALL    div10 
+         CPA     0,i
+         BREQ    staNo      
+         ADDA    10,i                
+staNo:   STA     resteN,d    
+         STX     noteNorm,d 
+         LDX     0,i         ;calcul ecart-type 
+
+continue:LDA     tabNoteG,x
+         SUBA    moy,d
+         BRGE    next
+         NEGA
+next:    STX     nombre,d
+         ADDA    5,i
+         CALL    div10
+         STX     multiple,d
+         LDA     0,i
+         CALL    mult
+         ADDA    ecart1,d
+         STA     ecart1,d
+         LDX     nombre,d
+         ADDX    2,i
+         CPX     numTabG,d 
+         BRLT    continue
+         LDA     ecart1,d
+         LDX     nbEtudia,d
+         CALL    div
+         STX     ecart,d
+         NEGA
+         CPA     3,i
+         BRLT    next7
+         LDA     ecart,d
+         ADDA    1,i
+         STA     ecart,d
+next7:   CALL    rcCarre 
+affichaG:STRO    txtNbEt,d
+         DECO    nbEtudia,d 
+         STRO    txtMoyG,d
+         DECO    noteNorm,d
+         CHARO   '.',i
+         DECO    resteN,d
+         CHARO   '%',i 
+         STRO    txtEcarG,d
+         DECO    ecartT,d 
+;
+fin:     STRO    fini,d      
+         STOP                
+;
+accueil: .ASCII  "Bienvenue dans ce programme de calcul des notes des étudiants."
+         .ASCII  "\nVous devrez entrer les résultats des cinq TP de chaque étudiants séparés par des virgules."
+         .ASCII  "\nPour terminer le programme, veuillez appuyer sur 'Enter'."
+         .ASCII  "\n\x00"    
+donnees1:.ASCII  "\n-------------------------------------------------------------"
+         .ASCII  "\nEntrez les notes du 1er étudiant: \x00"
+donnees2:.ASCII  "\n-------------------------------------------------------------"
+         .ASCII  "\nEntrez les notes du \x00"
+donnees3:.ASCII  "ieme étudiant: \x00"
+invalide:.ASCII  "\n\nEntrée invalide\x00"
+fini:    .ASCII  "\n\nFin du programme. Merci.\x00"
+E50:     .ASCII  "\n\nLe programme ne peut pas traiter plus de 50 étudiants.\x00"
+txtNoteN:.ASCII  "Note normale: \x00"
+txtNoteM:.ASCII  "   Note majorée: \x00"
+txtNoteF:.ASCII  "   Note finale: \x00"
+txtNotM1:.ASCII  "  Note majorée: \x00"
+txtNotF1:.ASCII  "  Note finale: \x00"
+txtNoteL:.ASCII  "\nNote littérale: \x00"
+txtEcart:.ASCII  "    Ecart-type: \x00"
+txtNbEt: .ASCII  "\n-------------------------------------------------------------\nNombre d'étudiants: \x00"
+txtMoyG: .ASCII  "\nMoyenne des notes finales du groupe: \x00"
+txtEcarG:.ASCII  "\nEcart-type des notes finales du groupe: \x00"
+;
+caract:  .BLOCK  1           ; #1h
+nbCaract:.BLOCK  2           ; #2h
+nombre:  .BLOCK  2           ; #2h
+nombreA: .BLOCK  2
+noteEntr:.BLOCK  2           ; #2h
+note:    .BLOCK  2
+compteur:.BLOCK  2           ; #2h
+compt2:  .BLOCK  2           ; #2h
+TP1:     .BLOCK  2           ; #2h
+TP2:     .BLOCK  2           ; #2h
+TP3:     .BLOCK  2           ; #2h
+TP4:     .BLOCK  2           ; #2h
+TP5:     .BLOCK  2           ; #2h
+noteMeil:.BLOCK  2           ; #2h
+nbEtudia:.BLOCK  2           ; #2h
+noteNorm:.BLOCK  2           ; #2h
+resteN:  .BLOCK  2           ; #2h
+noteMaj: .BLOCK  2           ; #2h
+resteM:  .BLOCK  2           ; #2h
+noteFin: .BLOCK  2           ; #2h
+resteF:  .BLOCK  2           ; #2h
+noteLit: .BLOCK  1           ; #1h
+signe:   .BLOCK  1           ; #1h
+ecartT:  .BLOCK  2           ; #2h
+resteEca:.BLock  2           ; #2h
+numTab:  .BLOCK  2           ; #2h
+numTabG: .BLOCK  2           ; #2h
+moy:     .BLOCK  2           ; #2h
+ecart1:  .BLOCK  2           ; #2h
+ecart2:  .BLOCK  2
+ecart3:  .BLOCK  2
+ecart4:  .BLOCK  2
+ecart5:  .BLOCK  2
+ecart:   .BLOCK  2           ; #2h
+restecar:.BLOCK  2
+multiple:.BLOCK  2
+tabEcart:.BLOCK  100
+tabNoteE:.BLOCK  500         ; #500h
+tabNoteG:.BLOCK  100         ; #100h
+tabNote: .BLOCK  64
+longueur:.BLOCK  2           ; #2h
+;
+; MULTIPLICATION PAR 100
+;
+mult100: STA     nombre,d    ; multiplication par 100
+         ASLA                
+         ASLA                
+         ASLA                
+         STA     noteEntr,d  
+         ASLA                
+         ADDA    noteEntr,d  
+         ADDA    nombre,d    
+         ASLA                
+         ASLA                
+         STA     noteEntr,d
+         RET0
+;
+; MULTIPLICATION PAR 10
+;
+mult10:  STA     nombre,d    ; multiplication par 10
+         ASLA                
+         ASLA                
+         ADDA    nombre,d    
+         ASLA                
+         STA     note,d     
+         RET0
+;
+; MULTIPLICATION        
+;
+mult:    CPX     0,i
+         BREQ    retour        
+mult1:   ADDA    multiple,d
+         SUBX    1,i
+         CPX     0,i
+         BREQ    retour
+         BR      mult1
+retour:  RET0
+;
+; DIVISION PAR 10
+;
+div10:   LDX     0,i          
+divise10:ADDX    1,i         
+         SUBA    10,i        
+         BRGT    divise10    
+         BRGE    passe10     
+         SUBX    1,i         
+passe10: RET0
+;
+; DIVISION
+;
+div:     STX     nombre,d
+         LDX     0,i
+         CPA     0,i
+         BREQ    passed
+divise:  ADDX    1,i
+         SUBA    nombre,d
+         BRGT    divise
+         BRGE    passed
+         SUBX    1,i
+passed:  RET0
+;
+; Calcul de la note normale
+;
+notNorma:SUBX    10,i        ; calcul de la moyenne normale
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP1,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP2,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP3,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP4,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP5,d       
+         ADDX    2,i         
+         STX     numTab,d    
+         LDA     TP1,d       
+         ADDA    TP2,d       
+         ADDA    TP3,d       
+         ADDA    TP4,d       
+         ADDA    TP5,d       
+         ADDA    1,i  
+         ASRA  
+         ADDA    5,i        
+         CALL    div10
+         STX     noteNorm,d
+         RET0
+;
+; Calcul de la note majorée quand la première note est la meilleure
+;
+noteMaj1:SUBX    10,i        
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP1,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP2,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP3,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP4,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP5,d       
+         ADDX    2,i         
+         STX     numTab,d    
+         LDA     TP1,d       
+         ADDA    TP2,d       
+         ADDA    TP3,d       
+         ADDA    TP4,d       
+         ADDA    TP5,d       
+         ADDA    1,i  
+         ASRA   
+         ADDA    5,i
+         CALL    div10 
+         STX     noteMaj,d
+         RET0
+;
+; Calcul de la note majorée quand la 2e note est la meilleure
+;
+noteMaj2:SUBX    10,i        
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x    
+         STA     TP1,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x
+         ADDA    tabNoteE,x
+         STA     TP2,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP3,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP4,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP5,d       
+         ADDX    2,i         
+         STX     numTab,d    
+         LDA     TP1,d       
+         ADDA    TP2,d       
+         ADDA    TP3,d       
+         ADDA    TP4,d       
+         ADDA    TP5,d       
+         ADDA    1,i  
+         ASRA   
+         ADDA    5,i
+         CALL    div10 
+         STX     noteMaj,d
+         RET0
+;
+; Calcul de la note majorée quand la 3e note est la meilleure
+;
+noteMaj3:SUBX    10,i        
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x    
+         STA     TP1,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP2,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x 
+         ADDA    tabNoteE,x 
+         STA     TP3,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP4,d       
+         ADDX    2,i         
+         LDA     tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         ADDA    tabNoteE,x  
+         STA     TP5,d       
+         ADDX    2,i         
+         STX     numTab,d    
+         LDA     TP1,d       
+         ADDA    TP2,d       
+         ADDA    TP3,d       
+         ADDA    TP4,d       
+         ADDA    TP5,d       
+         ADDA    1,i  
+         ASRA   
+         ADDA    5,i
+         CALL    div10 
+         STX     noteMaj,d
+         RET0
+;
+; Carré d'un nombre        
+;
+rcCarre: LDA     1,i         
+         LDX     1,i         
+         STA     ecartT,d  
+tantque: CPX     ecart,d    ; tant que (x <= nombre)
+         BRGT    finttq      
+         ADDX    ecartT,d  
+         ADDX    ecartT,d  
+         ADDX    1,i         ; x <- 2 * résultat + 1
+         ADDA    1,i         
+         STA     ecartT,d  
+         BR      tantque     
+finttq:  SUBA    1,i         ; 1 fois en trop
+         STA     ecartT,d  
+         RET0 
+;
+; transformation des caractere en notes
+;
+transfo: LDX     -2,i
+transfoA:ADDX    2,i
+         LDA     tabNote,x
+         CPA     0,i 
+         BRNE    transfoB
+         CPX     longueur,d
+         BRLT    transfoA
+transfoB:STA     nombreA,d 
+         STX     nombre,d
+         LDA     longueur,d 
+         SUBA    nombre,d
+         ASRA
+         CPA     0,i
+         BREQ    transfo0
+         CPA     1,i
+         BREQ    transfo1
+         CPA     2,i
+         BREQ    transfo2 
+         CPA     3,i
+         BREQ    transfo3
+         BRGT    erreurT
+transfo0:LDA     nombreA,d
+         LDX     numTab,d
+         STA     tabNoteE,x
+         BR      finTrans
+transfo1:LDA     nombreA,d
+         CALL    mult10
+         ADDX    2,i
+         ADDA    tabNote,x
+         LDX     numTab,d
+         STA     tabNoteE,x
+         BR      finTrans
+transfo2:LDA     nombreA,d
+         CALL    mult100
+         ADDX    2,i
+         LDA     tabNote,x
+         CALL    mult10
+         ADDX    2,i
+         LDA     tabNote,x
+         ADDA    note,d
+         ADDA    noteEntr,d
+         LDX     numTab,d
+         STA     tabNoteE,x
+         BR      finTrans
+transfo3:LDA     nombreA,d
+         CPA     1,i
+         BRNE    erreurT
+         LDA     1000,i
+         LDX     numTab,d 
+         STA     tabNoteE,x
+         BR      finTrans
+erreurT: LDX     -1,i
+         RET0
+finTrans:ADDX    2,i
+         STX     numTab,d 
+         RET0
+         
+         .END                  

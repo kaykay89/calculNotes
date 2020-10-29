@@ -1,0 +1,112 @@
+Bienvenue dans ce programme de calcul des notes des étudiants.
+Vous devrez entrer les résultats des cinq TP de chaque étudiants séparés par des virgules.
+Pour terminer le programme, veuillez appuyer sur 'Enter'.
+
+-------------------------------------------------------------
+Entrez les notes du 1er étudiant: 
+Note normale: 39.0%   Note majorée: 47.7%   Note finale: 47.7%
+Note littérale: E     Ecart-type: 32
+-------------------------------------------------------------
+Entrez les notes du 2ieme étudiant: 
+Note normale: 50.9%   Note majorée: 60.0%   Note finale: 60.0%
+Note littérale: C-    Ecart-type: 41
+-------------------------------------------------------------
+Entrez les notes du 3ieme étudiant: 
+Note normale: 34.8%   Note majorée: 43.8%   Note finale: 43.8%
+Note littérale: E     Ecart-type: 45
+-------------------------------------------------------------
+Entrez les notes du 4ieme étudiant: 
+Note normale: 44.6%   Note majorée: 53.6%   Note finale: 53.6%
+Note littérale: D     Ecart-type: 38
+-------------------------------------------------------------
+Entrez les notes du 5ieme étudiant: 
+Note normale: 6.8%    Note majorée: 9.6%    Note finale: 9.6%
+Note littérale: E     Ecart-type: 12
+-------------------------------------------------------------
+Entrez les notes du 6ieme étudiant: 
+Note normale: 55.1%   Note majorée: 63.8%   Note finale: 63.8%
+Note littérale: C     Ecart-type: 41
+-------------------------------------------------------------
+Entrez les notes du 7ieme étudiant: 
+Note normale: 53.0%   Note majorée: 53.5%   Note finale: 53.5%
+Note littérale: D     Ecart-type: 7
+-------------------------------------------------------------
+Entrez les notes du 8ieme étudiant: 
+Note normale: 53.0%   Note majorée: 53.5%   Note finale: 53.5%
+Note littérale: D     Ecart-type: 7
+-------------------------------------------------------------
+Entrez les notes du 9ieme étudiant: 
+Note normale: 63.1%   Note majorée: 64.8%   Note finale: 64.8%
+Note littérale: C     Ecart-type: 12
+-------------------------------------------------------------
+Entrez les notes du 10ieme étudiant: 
+Note normale: 100.0%  Note majorée: 100.0%  Note finale: 100.0%
+Note littérale: A+    Ecart-type: 0
+-------------------------------------------------------------
+Entrez les notes du 11ieme étudiant: 
+Note normale: 69.1%   Note majorée: 68.1%   Note finale: 69.1%
+Note littérale: C+    Ecart-type: 33
+-------------------------------------------------------------
+Entrez les notes du 12ieme étudiant: 
+Note normale: 54.5%   Note majorée: 63.3%   Note finale: 63.3%
+Note littérale: C     Ecart-type: 42
+-------------------------------------------------------------
+Entrez les notes du 13ieme étudiant: 
+Note normale: 51.3%   Note majorée: 60.4%   Note finale: 60.4%
+Note littérale: C-    Ecart-type: 40
+-------------------------------------------------------------
+Entrez les notes du 14ieme étudiant: 
+Note normale: 43.9%   Note majorée: 52.1%   Note finale: 52.1%
+Note littérale: D     Ecart-type: 33
+-------------------------------------------------------------
+Entrez les notes du 15ieme étudiant: 
+Note normale: 44.6%   Note majorée: 53.1%   Note finale: 53.1%
+Note littérale: D     Ecart-type: 32
+-------------------------------------------------------------
+Entrez les notes du 16ieme étudiant: 
+Note normale: 56.6%   Note majorée: 65.2%   Note finale: 65.2%
+Note littérale: C     Ecart-type: 41
+-------------------------------------------------------------
+Entrez les notes du 17ieme étudiant: 
+Note normale: 55.2%   Note majorée: 63.6%   Note finale: 63.6%
+Note littérale: C     Ecart-type: 38
+-------------------------------------------------------------
+Entrez les notes du 18ieme étudiant: 
+Note normale: 56.3%   Note majorée: 64.9%   Note finale: 64.9%
+Note littérale: C     Ecart-type: 41
+-------------------------------------------------------------
+Entrez les notes du 19ieme étudiant: 
+Note normale: 25.2%   Note majorée: 33.9%   Note finale: 33.9%
+Note littérale: E     Ecart-type: 34
+-------------------------------------------------------------
+Entrez les notes du 20ieme étudiant: 
+Note normale: 16.3%   Note majorée: 23.9%   Note finale: 23.9%
+Note littérale: E     Ecart-type: 31
+-------------------------------------------------------------
+Entrez les notes du 21ieme étudiant: 
+Note normale: 52.9%   Note majorée: 61.7%   Note finale: 61.7%
+Note littérale: C-    Ecart-type: 39
+-------------------------------------------------------------
+Entrez les notes du 22ieme étudiant: 
+Note normale: 47.8%   Note majorée: 56.2%   Note finale: 56.2%
+Note littérale: D+    Ecart-type: 35
+-------------------------------------------------------------
+Entrez les notes du 23ieme étudiant: 
+Note normale: 35.1%   Note majorée: 43.8%   Note finale: 43.8%
+Note littérale: E     Ecart-type: 40
+-------------------------------------------------------------
+Entrez les notes du 24ieme étudiant: 
+Note normale: 45.1%   Note majorée: 53.8%   Note finale: 53.8%
+Note littérale: D     Ecart-type: 39
+-------------------------------------------------------------
+Entrez les notes du 25ieme étudiant: 
+Note normale: 68.7%   Note majorée: 74.9%   Note finale: 74.9%
+Note littérale: B     Ecart-type: 34
+-------------------------------------------------------------
+Entrez les notes du 26ieme étudiant: 
+-------------------------------------------------------------
+Nombre d'étudiants: 25
+Moyenne des notes finales du groupe: 55.6%
+Ecart-type des notes finales du groupe: 16
+
+Fin du programme. Merci.
